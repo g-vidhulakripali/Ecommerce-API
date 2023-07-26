@@ -23,7 +23,7 @@ module.exports.products = async function (req, res) {
   try {
     const products = await Product.find({});
     if (!products.length) {
-      return res.status(200).json({
+      return res.status(404).json({
         message: "Products is empty - No Content Found! Create a new one!",
       });
     }
@@ -55,6 +55,26 @@ module.exports.delete = async function (req, res) {
     console.log(err);
     return res.status(500).json({
       message: `Unable to delete the product- Internal Server Error`,
+    });
+  }
+};
+
+module.exports.update = async function (req, res) {
+  const id = req.params.id;
+  const number = req.query.number;
+  try {
+    const product = await Product.findById(id);
+    updatedquantity = parseInt(product.quantity) + parseInt(number);
+    // console.log(updatedquantity);
+    await Product.updateOne({ _id: id }, { quantity: updatedquantity });
+    // console.log("success");
+    return res.status(200).json({
+      message: `Product has been successfully Updated!`,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: `Unable to update the product- Internal Server Error`,
     });
   }
 };
